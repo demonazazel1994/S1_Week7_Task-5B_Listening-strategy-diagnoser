@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Listening Strategy Diagnoser - Unit 7 Task 5B</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #5b667a;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --border: #d8e0ef;
+      --soft: #eaf1ff;
+      --success: #0f766e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 45%, #ffffff 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .sticky-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    }
+
+    .sticky-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .copy-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+    }
+
+    .copy-btn:hover { background: var(--primary-dark); }
+
+    .copy-status {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--success);
+      min-height: 20px;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 5vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .instruction-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .step {
+      background: var(--soft);
+      border: 1px solid #cfe0ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary-dark);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 16px;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .problem-preview {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px dashed #b8c5d9;
+      color: var(--muted);
+    }
+
+    .prompt-box {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 18px;
+      border-radius: 18px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      overflow-x: auto;
+      border: 1px solid #263449;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .output-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fcfdff;
+    }
+
+    .line {
+      border-bottom: 1px solid #cfd8e8;
+      min-height: 34px;
+      margin: 8px 0 14px;
+    }
+
+    @media (max-width: 560px) {
+      .sticky-inner { align-items: stretch; }
+      .copy-btn { width: 100%; }
+      .hero, .card { padding: 16px; border-radius: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <div>
+        <strong>Unit 7 Task 5B — AI Listening Strategy Diagnoser</strong>
+        <div class="copy-status" id="copyStatus"></div>
+      </div>
+      <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <h1>AI Listening Strategy Diagnoser</h1>
+      <p class="subtitle">Use this page after completing Unit 7 Task 5B: Following a Process — Two-Factor Authentication.</p>
+      <div class="instruction-grid">
+        <div class="step"><strong>1. Finish the listening task</strong>Complete the questions first. Do not use this page before listening.</div>
+        <div class="step"><strong>2. Choose your problem</strong>Select the closest difficulty. If you choose “Other problem”, type your own problem in the box.</div>
+        <div class="step"><strong>3. Copy the prompt</strong>Click the copy button at the top of the page.</div>
+        <div class="step"><strong>4. Ask AI</strong>Paste the prompt into XIPU AI or another AI tool and read the strategy advice.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <label for="problemSelect">Choose your listening problem:</label>
+      <select id="problemSelect" onchange="updatePrompt()">
+        <option value="generalIdea">I understood the general idea, but I missed the exact process steps.</option>
+        <option value="transitions">I got lost when the speakers moved from one step to the next.</option>
+        <option value="technicalWords">I missed technical words such as 2FA, authentication app, QR code, backup codes, or account settings.</option>
+        <option value="examplesVsSteps">I confused the examples with the main steps.</option>
+        <option value="similarOptions">I chose the wrong MCQ option because the options looked similar.</option>
+        <option value="backupDetails">I missed details about backup options or replacing a phone.</option>
+        <option value="tooMuchWriting">I wrote too much and missed the next part of the process.</option>
+        <option value="transcriptLater">I understood the transcript later, but I could not follow the audio while listening.</option>
+        <option value="other">Other problem: I had a different difficulty.</option>
+      </select>
+      <textarea id="otherProblem" oninput="updatePrompt()" placeholder="Type your own listening problem here. Example: I missed the difference between SMS codes and an authentication app."></textarea>
+      <div class="problem-preview" id="problemPreview"></div>
+      <p class="small-note">The prompt below will change based on your selection. If you choose “Other problem”, your typed problem will be inserted into the prompt automatically.</p>
+    </section>
+
+    <section class="card">
+      <h2>Prompt to copy</h2>
+      <div class="prompt-box" id="promptText"></div>
+    </section>
+
+    <section class="card">
+      <h2>After reading the AI feedback</h2>
+      <p>Write your personal listening target in your booklet.</p>
+      <div class="output-box">
+        <strong>My listening problem today was:</strong>
+        <div class="line"></div>
+        <strong>The strategy I will try next time is:</strong>
+        <div class="line"></div>
+        <strong>In the first listening, I will:</strong>
+        <div class="line"></div>
+        <strong>In the second listening, I will:</strong>
+        <div class="line"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const problems = {
+      generalIdea: "I understood the general idea, but I missed the exact process steps.",
+      transitions: "I got lost when the speakers moved from one step to the next.",
+      technicalWords: "I missed technical words such as 2FA, authentication app, QR code, backup codes, or account settings.",
+      examplesVsSteps: "I confused the examples with the main steps.",
+      similarOptions: "I chose the wrong MCQ option because the options looked similar.",
+      backupDetails: "I missed details about backup options or replacing a phone.",
+      tooMuchWriting: "I wrote too much and missed the next part of the process.",
+      transcriptLater: "I understood the transcript later, but I could not follow the audio while listening.",
+      other: "I had a different listening difficulty."
+    };
+
+    function buildPrompt(problem) {
+      return `I am a Year 1 EAP student. I just completed a listening task.
+
+Task profile:
+- Unit: Unit 7 Technology — Cybersecurity
+- Task: Task 5B, Listening 1 — Following a Process
+- Topic: setting up two-factor authentication / 2FA
+- Text type: conversation explaining a process
+- Task type: MCQs + process flow completion
+- Listening focus: following a process, identifying steps, selecting key details, and understanding examples
+- Key process: activate 2FA in account settings → choose a second authentication factor → install an authentication app → link the app to the account by scanning a QR code → enter the generated code into the website → set up backup options
+- Important listening signals: “The first step is…”, “Next…”, “After installing the app…”, “Once it’s accepted…”, “What’s equally important…”, “If I lose or replace my phone…”
+
+My listening problem:
+${problem}
+
+Please give me task-specific listening strategy advice.
+
+Do not give general advice. Link your advice to this process-listening task.
+
+Give me feedback in this format:
+
+1. Why this problem probably happened in this task:
+2. What I should listen for next time:
+3. What I should do during the first listening:
+4. What I should do during the second listening:
+5. One 2-minute practice action I can do now:
+
+Use simple English. Keep the advice practical and specific.`;
+    }
+
+    function updatePrompt() {
+      const key = document.getElementById('problemSelect').value;
+      const otherBox = document.getElementById('otherProblem');
+      let problem = problems[key];
+
+      if (key === 'other') {
+        otherBox.style.display = 'block';
+        const typedProblem = otherBox.value.trim();
+        problem = typedProblem || 'I had a different listening difficulty, but I have not described it yet.';
+      } else {
+        otherBox.style.display = 'none';
+        otherBox.value = '';
+      }
+
+      document.getElementById('problemPreview').textContent = 'Selected problem: ' + problem;
+      document.getElementById('promptText').textContent = buildPrompt(problem);
+      document.getElementById('copyStatus').textContent = '';
+    }
+
+    async function copyPrompt() {
+      const text = document.getElementById('promptText').textContent;
+      const status = document.getElementById('copyStatus');
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = 'Prompt copied!';
+      } catch (err) {
+        const range = document.createRange();
+        range.selectNode(document.getElementById('promptText'));
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        status.textContent = 'Copy failed. Please select and copy the prompt manually.';
+      }
+    }
+
+    updatePrompt();
+  </script>
+</body>
+</html>
